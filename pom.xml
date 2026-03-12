@@ -8,10 +8,10 @@
 		<version>4.0.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.assignment</groupId>
-	<artifactId>job-data-service</artifactId>
+	<groupId>com.ata</groupId>
+	<artifactId>job</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>job-data-service</name>
+	<name>job</name>
 	<description>Assignment project for Spring Boot for querying job data</description>
 	<url/>
 	<licenses>

@@ -1,13 +1,13 @@
-package com.assignment.job_data_service;
+package com.ata.job;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JobDataServiceApplication {
+public class JobApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JobDataServiceApplication.class, args);
+		SpringApplication.run(JobApplication.class, args);
 	}
 
 }

@@ -1,10 +1,10 @@
-package com.assignment.job_data_service;
+package com.ata.job;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JobDataServiceApplicationTests {
+class JobApplicationTests {
 
 	@Test
 	void contextLoads() {
