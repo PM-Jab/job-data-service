@@ -10,18 +10,11 @@ import java.util.Map;
 @RequestMapping("/job_data")
 public class JobController {
 
-    // GET /job_data?salary[gte]=50000
-    @GetMapping(params = "salary[gte]")
-    public ResponseEntity<List<Map<String, Object>>> getJobsBySalaryGte(
-            @RequestParam("salary[gte]") double minSalary) {
-
-        return ResponseEntity.ok();
-    }
-
-    // GET /job_data?salary[lte]=50000
-    @GetMapping(params = "salary[lte]")
-    public ResponseEntity<List<Map<String, Object>>> getJobsBySalaryLte(
-            @RequestParam("salary[lte]") double maxSalary) {
+    // GET /job_data?salary[gte]=50000&salary[lte]=100000
+    @GetMapping
+    public ResponseEntity<List<Map<String, Object>>> getJobsBySalary(
+            @RequestParam(value = "salary[gte]", required = false) Double minSalary,
+            @RequestParam(value = "salary[lte]", required = false) Double maxSalary) {
 
         return ResponseEntity.ok();
     }
