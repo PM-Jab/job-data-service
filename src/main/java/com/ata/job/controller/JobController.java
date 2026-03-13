@@ -18,6 +18,15 @@ public class JobController {
         return ResponseEntity.ok();
     }
 
+    // GET /job_data?salary[lte]=50000
+    @GetMapping(params = "salary[lte]")
+    public ResponseEntity<List<Map<String, Object>>> getJobsBySalaryLte(
+            @RequestParam("salary[lte]") double minSalary) {
+
+        return ResponseEntity.ok();
+    }
+
+
     // GET /job_data?fields=job_title,gender,salary
     @GetMapping(params = "fields")
     public ResponseEntity<List<Map<String, Object>>> getJobsByFields(
