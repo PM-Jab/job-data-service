@@ -21,15 +21,19 @@ public class JobService {
     private final JobRepository jobRepository;
 
     public List<JobResponseBody> getJobsFiltered(JobRequestParam req) {
-        return jobRepository
-                .findAll(Specification.where(JobSpecification.filterByMinSalary(req.getMinSalary()))
-                        .and(JobSpecification.filterByMaxSalary(req.getMaxSalary()))
-                        .and(JobSpecification.filterByJobTitle(req.getJobTitle()))
-                        .and(JobSpecification.filterByGender(req.getGender())),
-                        Sort.by(Sort.Direction.fromString(req.getSortType()), req.getSort() != null ? req.getSort() : "timestamp"))
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        Specification<Job> spec = Specification.where(JobSpecification.fromParams(req));
+        if (req.getFields() != null && !req.getFields().isBlank()) {
+            spec = spec.and(JobSpecification.forFields(List.of(req.getFields().split(","))));
+        }
+        Sort sort = Sort.by(Sort.Direction.fromString(req.getSortType()), req.getSort() != null ? req.getSort() : "timestamp");
+
+        try {
+            List<Job> jobs = jobRepository.findAll(spec, sort);
+            return jobs.stream().map(this::toResponse).toList();
+        } catch (Exception e) {
+            log.error("Error fetching jobs with filters: {}", req, e);
+            throw e;
+        }
     }
     private JobResponseBody toResponse(Job job) {
         return JobResponseBody.builder()
