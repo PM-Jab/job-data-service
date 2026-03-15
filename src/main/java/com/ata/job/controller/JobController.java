@@ -2,6 +2,8 @@ package com.ata.job.controller;
 
 import com.ata.job.constant.JobConstants;
 import com.ata.job.model.JobRequestParam;
+import com.ata.job.model.JobResponseBody;
+import com.ata.job.service.JobService;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
@@ -11,18 +13,19 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Validated
 @RestController
-@RequestMapping("/job_data")
+@RequiredArgsConstructor
 public class JobController {
+
+    private final JobService jobService;
 
     // GET /job_data?fields=job_title,gender,salary
     // GET /job_data?salary[gte]=100&fields=job_title
     // GET /job_data?salary[gte]=100&fields=job_title&sort=job_title&sort_type=DESC
-    @GetMapping(params = "fields")
-    public ResponseEntity<List<Map<String, Object>>> getJobsFilterdColumn(
+    @GetMapping(value="/job_data", params = "fields")
+    public ResponseEntity<List<JobResponseBody>> getJobs(
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "sort_type", required = false, defaultValue = "ASC") String sortType,
             @RequestParam(value = "fields", required = false) String fields,
@@ -55,7 +58,8 @@ public class JobController {
                 .sort(sort)
                 .sortType(sortType)
                 .build();
-
-        return ResponseEntity.ok();
+        
+        List<JobResponseBody> response = jobService.getJobsFiltered(req);
+        return ResponseEntity.ok(response);
     }
 }

@@ -23,6 +23,6 @@ public class JobConstants {
     public static final String MSG_JOB_TITLE_SIZE = "job_title must be 40 characters or fewer";
 
     // gender constraints
-    public static final String GENDER_PATTERN = "male|female|trans";
-    public static final String MSG_GENDER_PATTERN = "gender must be one of: male, female, trans";
+    public static final String GENDER_PATTERN = "Male|Female";
+    public static final String MSG_GENDER_PATTERN = "gender must be one of: male, female";
 }
