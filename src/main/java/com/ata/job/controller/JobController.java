@@ -18,9 +18,15 @@ import java.util.Map;
 @RequestMapping("/job_data")
 public class JobController {
 
-    // GET /job_data?salary[gte]=50000&salary[lte]=100000
-    @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getJobsFilteredRow(
+    // GET /job_data?fields=job_title,gender,salary
+    // GET /job_data?salary[gte]=100&fields=job_title
+    // GET /job_data?salary[gte]=100&fields=job_title&sort=job_title&sort_type=DESC
+    @GetMapping(params = "fields")
+    public ResponseEntity<List<Map<String, Object>>> getJobsFilterdColumn(
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "sort_type", required = false, defaultValue = "ASC") String sortType,
+            @RequestParam(value = "fields", required = false) String fields,
+
             @RequestParam(value = JobParamValidateConstants.PARAM_SALARY_GTE, required = false)
             @DecimalMin(value = JobParamValidateConstants.SALARY_MIN, message = JobParamValidateConstants.MSG_SALARY_GTE_MIN)
             @DecimalMax(value = JobParamValidateConstants.SALARY_MAX, message = JobParamValidateConstants.MSG_SALARY_GTE_MAX)
@@ -41,32 +47,14 @@ public class JobController {
             String gender) {
 
         JobRequestParam req = JobRequestParam.builder()
+                .fields(fields)
                 .minSalary(minSalary)
                 .maxSalary(maxSalary)
                 .jobTitle(jobTitle)
                 .gender(gender)
+                .sort(sort)
+                .sortType(sortType)
                 .build();
-
-        return ResponseEntity.ok();
-    }
-
-
-    // GET /job_data?fields=job_title,gender,salary
-    @GetMapping(params = "fields")
-    public ResponseEntity<List<Map<String, Object>>> getJobsFilterdColumn(
-            @RequestParam("fields") String fields) {
-
-        List<String> selectedFields = List.of(fields.split(","));
-
-
-        return ResponseEntity.ok();
-    }
-
-    // GET /job_data?sort=job_title&sort_type=DESC
-    @GetMapping(params = "sort")
-    public ResponseEntity<List<Map<String, Object>>> getJobsSorted(
-            @RequestParam("sort") String sortField,
-            @RequestParam(value = "sort_type", defaultValue = "ASC") String sortType) {
 
         return ResponseEntity.ok();
     }
