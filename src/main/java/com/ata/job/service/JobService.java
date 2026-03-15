@@ -8,6 +8,7 @@ import com.ata.job.repository.entity.Job;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,21 +20,17 @@ public class JobService {
 
     private final JobRepository jobRepository;
 
-    public List<JobResponseBody> getJobsFilteredRows(JobRequestParam req) {
+    public List<JobResponseBody> getJobsFiltered(JobRequestParam req) {
         return jobRepository
-                .findAll(JobSpecification.fromParams(req))
+                .findAll(Specification.where(JobSpecification.filterByMinSalary(req.getMinSalary()))
+                        .and(JobSpecification.filterByMaxSalary(req.getMaxSalary()))
+                        .and(JobSpecification.filterByJobTitle(req.getJobTitle()))
+                        .and(JobSpecification.filterByGender(req.getGender())),
+                        Sort.by(Sort.Direction.fromString(req.getSortType()), req.getSort() != null ? req.getSort() : "timestamp"))
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
-
-    public List<JobResponseBody> getJobsFilteredColumns(JobRequestParam req) {
-        return
-    }
-
-    public List<JobResponseBody> getJobsSorted(JobRequestParam req) {
-    }
-
     private JobResponseBody toResponse(Job job) {
         return JobResponseBody.builder()
                 .timestamp(job.getTimestamp())

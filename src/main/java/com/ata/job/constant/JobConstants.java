@@ -1,6 +1,6 @@
 package com.ata.job.constant;
 
-public class JobParamValidateConstants {
+public class JobConstants {
 
     // param names
     public static final String PARAM_SALARY_GTE = "salary[gte]";

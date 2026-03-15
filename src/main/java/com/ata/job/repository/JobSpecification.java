@@ -11,6 +11,29 @@ import java.util.List;
 
 public class JobSpecification {
 
+    private static String toEntityField(String apiField) {
+        return switch (apiField.trim().toLowerCase()) {
+            case "job_title"               -> "jobTitle";
+            case "years_at_employer"       -> "yearsAtEmployer";
+            case "years_of_experience"     -> "yearsOfExperience";
+            case "signing_bonus"           -> "signingBonus";
+            case "annual_bonus"            -> "annualBonus";
+            case "annual_stock_value_bonus"-> "annualStockValueBonus";
+            case "additional_comments"     -> "additionalComments";
+            default -> apiField.trim();
+        };
+    }
+
+    public static Specification<Job> forFields(List<String> fields) {
+        return (root, query, cb) -> {
+            List<Selection<?>> selections = fields.stream()
+                    .map(f -> (Selection<?>) root.get(toEntityField(f)))
+                    .toList();
+            query.multiselect(selections);
+            return cb.conjunction(); // no WHERE clause, just select specific columns
+        };
+    }
+
     public static Specification<Job> fromParams(JobRequestParam params) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
