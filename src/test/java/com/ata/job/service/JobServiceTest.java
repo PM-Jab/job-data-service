@@ -54,8 +54,8 @@ class JobServiceTest {
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getJobTitle()).isEqualTo("Software Engineer");
-        assertThat(result.get(0).getEmployer()).isEqualTo("Google");
-        assertThat(result.get(0).getSalary()).isEqualTo("120000.0");
+        assertThat(result.get(0).getEmployer()).isNull();   // not in fields
+        assertThat(result.get(0).getSalary()).isNull();     // not in fields
     }
 
     @Test

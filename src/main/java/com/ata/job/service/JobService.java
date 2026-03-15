@@ -10,7 +10,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,27 +23,36 @@ public class JobService {
 
     public List<JobResponseBody> getJobsFiltered(JobRequestParam req) {
         Specification<Job> spec = Specification.where(JobSpecification.fromParams(req));
-        if (req.getFields() != null && !req.getFields().isBlank()) {
-            spec = spec.and(JobSpecification.forFields(List.of(req.getFields().split(","))));
-        }
         Sort sort = Sort.by(Sort.Direction.fromString(req.getSortType()), req.getSort() != null ? req.getSort() : "timestamp");
 
-        return jobRepository.findAll(spec, sort).stream().map(this::toResponse).toList();
+        Set<String> fields = null;
+        if (req.getFields() != null && !req.getFields().isBlank()) {
+            fields = Arrays.stream(req.getFields().split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toSet());
+        }
+
+        final Set<String> requestedFields = fields;
+        return jobRepository.findAll(spec, sort).stream()
+                .map(job -> toResponse(job, requestedFields))
+                .toList();
     }
-    private JobResponseBody toResponse(Job job) {
+
+    private JobResponseBody toResponse(Job job, Set<String> fields) {
+        boolean all = fields == null;
         return JobResponseBody.builder()
-                .timestamp(job.getTimestamp())
-                .employer(job.getEmployer())
-                .location(job.getLocation())
-                .jobTitle(job.getJobTitle())
-                .yearsAtEmployer(job.getYearsAtEmployer())
-                .yearsOfExperience(job.getYearsOfExperience())
-                .salary(job.getSalary() != null ? job.getSalary().toString() : null)
-                .signingBonus(job.getSigningBonus() != null ? job.getSigningBonus().toString() : null)
-                .annualBonus(job.getAnnualBonus() != null ? job.getAnnualBonus().toString() : null)
-                .annualStockValueBonus(job.getAnnualStockValueBonus() != null ? job.getAnnualStockValueBonus().toString() : null)
-                .gender(job.getGender())
-                .additionalComments(job.getAdditionalComments())
+                .timestamp(all || fields.contains("timestamp") ? job.getTimestamp() : null)
+                .employer(all || fields.contains("employer") ? job.getEmployer() : null)
+                .location(all || fields.contains("location") ? job.getLocation() : null)
+                .jobTitle(all || fields.contains("job_title") ? job.getJobTitle() : null)
+                .yearsAtEmployer(all || fields.contains("years_at_employer") ? job.getYearsAtEmployer() : null)
+                .yearsOfExperience(all || fields.contains("years_of_experience") ? job.getYearsOfExperience() : null)
+                .salary(all || fields.contains("salary") ? (job.getSalary() != null ? job.getSalary().toString() : null) : null)
+                .signingBonus(all || fields.contains("signing_bonus") ? (job.getSigningBonus() != null ? job.getSigningBonus().toString() : null) : null)
+                .annualBonus(all || fields.contains("annual_bonus") ? (job.getAnnualBonus() != null ? job.getAnnualBonus().toString() : null) : null)
+                .annualStockValueBonus(all || fields.contains("annual_stock_value_bonus") ? (job.getAnnualStockValueBonus() != null ? job.getAnnualStockValueBonus().toString() : null) : null)
+                .gender(all || fields.contains("gender") ? job.getGender() : null)
+                .additionalComments(all || fields.contains("additional_comments") ? job.getAdditionalComments() : null)
                 .build();
     }
 }
