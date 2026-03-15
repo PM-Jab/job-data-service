@@ -1,6 +1,7 @@
 package com.ata.job.controller;
 
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -40,6 +42,7 @@ public class GlobalExceptionHandler {
     // Catch-all for anything unexpected
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneric(Exception ex) {
+        log.error("Unexpected error: {}", ex.getMessage(), ex);
         return ResponseEntity.internalServerError()
                 .body(Map.of("error", "An unexpected error occurred"));
     }

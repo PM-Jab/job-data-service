@@ -24,5 +24,5 @@ public class JobConstants {
 
     // gender constraints
     public static final String GENDER_PATTERN = "Male|Female";
-    public static final String MSG_GENDER_PATTERN = "gender must be one of: male, female";
+    public static final String MSG_GENDER_PATTERN = "gender must be one of: Male, Female";
 }

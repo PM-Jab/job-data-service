@@ -6,14 +6,12 @@ import com.ata.job.repository.JobRepository;
 import com.ata.job.repository.JobSpecification;
 import com.ata.job.repository.entity.Job;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JobService {
@@ -27,13 +25,7 @@ public class JobService {
         }
         Sort sort = Sort.by(Sort.Direction.fromString(req.getSortType()), req.getSort() != null ? req.getSort() : "timestamp");
 
-        try {
-            List<Job> jobs = jobRepository.findAll(spec, sort);
-            return jobs.stream().map(this::toResponse).toList();
-        } catch (Exception e) {
-            log.error("Error fetching jobs with filters: {}", req, e);
-            throw e;
-        }
+        return jobRepository.findAll(spec, sort).stream().map(this::toResponse).toList();
     }
     private JobResponseBody toResponse(Job job) {
         return JobResponseBody.builder()
