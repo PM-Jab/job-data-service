@@ -27,7 +27,7 @@ public class JobSpecification {
     public static Specification<Job> forFields(List<String> fields) {
         return (root, query, cb) -> {
             List<Selection<?>> selections = fields.stream()
-                    .map(f -> (Selection<?>) root.get(toEntityField(f)))
+                    .<Selection<?>>map(f -> root.get(toEntityField(f)))
                     .toList();
             query.multiselect(selections);
             return cb.conjunction(); // no WHERE clause, just select specific columns
