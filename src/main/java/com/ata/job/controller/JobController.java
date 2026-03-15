@@ -2,6 +2,7 @@ package com.ata.job.controller;
 
 import com.ata.job.constant.JobConstants;
 import com.ata.job.model.JobRequestParam;
+import com.ata.job.model.ApiResponse;
 import com.ata.job.model.JobResponseBody;
 import com.ata.job.service.JobService;
 import jakarta.validation.constraints.DecimalMax;
@@ -26,7 +27,7 @@ public class JobController {
     // GET /job_data?salary[gte]=100&fields=job_title
     // GET /job_data?salary[gte]=100&fields=job_title&sort=job_title&sort_type=DESC
     @GetMapping(value="/job_data")
-    public ResponseEntity<List<JobResponseBody>> getJobs(
+    public ResponseEntity<ApiResponse<JobResponseBody>> getJobs(
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "sort_type", required = false, defaultValue = "ASC") String sortType,
             @RequestParam(value = "fields", required = false) String fields,
@@ -60,7 +61,13 @@ public class JobController {
                 .sortType(sortType)
                 .build();
         
-        List<JobResponseBody> response = jobService.getJobsFiltered(req);
+        List<JobResponseBody> jobs = jobService.getJobsFiltered(req);
+        ApiResponse<JobResponseBody> response = ApiResponse.<JobResponseBody>builder()
+                .statusCode("200")
+                .message("Success")
+                .count(jobs.size())
+                .data(jobs)
+                .build();
         return ResponseEntity.ok(response);
     }
 }

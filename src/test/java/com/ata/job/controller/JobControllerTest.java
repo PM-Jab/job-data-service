@@ -1,5 +1,6 @@
 package com.ata.job.controller;
 
+import com.ata.job.model.ApiResponse;
 import com.ata.job.model.JobRequestParam;
 import com.ata.job.model.JobResponseBody;
 import com.ata.job.service.JobService;
@@ -45,13 +46,15 @@ class JobControllerTest {
     void getJobs_withFieldsOnly_returns200WithBody() {
         when(jobService.getJobsFiltered(any())).thenReturn(List.of(mockJob));
 
-        ResponseEntity<List<JobResponseBody>> response = jobController.getJobs(
+        ResponseEntity<ApiResponse<JobResponseBody>> response = jobController.getJobs(
                 null, "ASC", "job_title",
                 null, null, null, null);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).hasSize(1);
-        assertThat(response.getBody().get(0).getJobTitle()).isEqualTo("Software Engineer");
+        assertThat(response.getBody().getStatusCode()).isEqualTo("200");
+        assertThat(response.getBody().getMessage()).isEqualTo("Success");
+        assertThat(response.getBody().getCount()).isEqualTo(1);
+        assertThat(response.getBody().getData().get(0).getJobTitle()).isEqualTo("Software Engineer");
     }
 
     @Test
@@ -77,12 +80,15 @@ class JobControllerTest {
     void getJobs_withNoFilters_returns200EmptyList() {
         when(jobService.getJobsFiltered(any())).thenReturn(List.of());
 
-        ResponseEntity<List<JobResponseBody>> response = jobController.getJobs(
+        ResponseEntity<ApiResponse<JobResponseBody>> response = jobController.getJobs(
                 null, "ASC", "salary",
                 null, null, null, null);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEmpty();
+        assertThat(response.getBody().getStatusCode()).isEqualTo("200");
+        assertThat(response.getBody().getMessage()).isEqualTo("Success");
+        assertThat(response.getBody().getData()).isEmpty();
+        assertThat(response.getBody().getCount()).isZero();
     }
 
     @Test
@@ -106,11 +112,13 @@ class JobControllerTest {
         JobResponseBody job2 = JobResponseBody.builder().jobTitle("Lead").build();
         when(jobService.getJobsFiltered(any())).thenReturn(List.of(job1, job2));
 
-        ResponseEntity<List<JobResponseBody>> response = jobController.getJobs(
+        ResponseEntity<ApiResponse<JobResponseBody>> response = jobController.getJobs(
                 null, "ASC", "job_title",
                 null, null, null, null);
 
-        assertThat(response.getBody()).containsExactly(job1, job2);
+        assertThat(response.getBody().getData()).containsExactly(job1, job2);
+        assertThat(response.getBody().getCount()).isEqualTo(2);
+        assertThat(response.getBody().getMessage()).isEqualTo("Success");
     }
 
     @Test
@@ -126,7 +134,6 @@ class JobControllerTest {
 
     @Test
     void getJobs_serviceThrowsIllegalArgument_propagatesException() {
-        // Caused by invalid fields value → root.get("invalid_col") in JobSpecification
         when(jobService.getJobsFiltered(any()))
                 .thenThrow(new IllegalArgumentException("Unable to locate Attribute with the given name [invalid_col]"));
 
@@ -139,7 +146,6 @@ class JobControllerTest {
 
     @Test
     void getJobs_serviceThrowsRuntimeException_propagatesException() {
-        // Caught by GlobalExceptionHandler.handleGeneric → 500
         when(jobService.getJobsFiltered(any()))
                 .thenThrow(new RuntimeException("Unexpected database error"));
 
