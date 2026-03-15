@@ -1,7 +1,5 @@
 package com.ata.job.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,16 +9,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class JobRequestBody {
-    // salary filter
-    @RequestParam(value = "salary[gte]")
+public class JobRequestParam {
+    // row filters
     private Double minSalary;
-
-    @RequestParam(value = "salary[lte]")
     private Double maxSalary;
+    private String jobTitle;
+    private String gender;
 
-    // field selection
+    // column filter = job_title,gender,salary
     private String fields;
 
     // sorting

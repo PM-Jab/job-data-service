@@ -1,6 +1,7 @@
 package com.ata.job.controller;
 
-import com.ata.job.constant.JobFilterConstants;
+import com.ata.job.constant.JobParamValidateConstants;
+import com.ata.job.model.JobRequestParam;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
@@ -19,25 +20,32 @@ public class JobController {
 
     // GET /job_data?salary[gte]=50000&salary[lte]=100000
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getJobsByFilters(
-            @RequestParam(value = JobFilterConstants.PARAM_SALARY_GTE, required = false)
-            @DecimalMin(value = JobFilterConstants.SALARY_MIN, message = JobFilterConstants.MSG_SALARY_GTE_MIN)
-            @DecimalMax(value = JobFilterConstants.SALARY_MAX, message = JobFilterConstants.MSG_SALARY_GTE_MAX)
+    public ResponseEntity<List<Map<String, Object>>> getJobsFilteredRow(
+            @RequestParam(value = JobParamValidateConstants.PARAM_SALARY_GTE, required = false)
+            @DecimalMin(value = JobParamValidateConstants.SALARY_MIN, message = JobParamValidateConstants.MSG_SALARY_GTE_MIN)
+            @DecimalMax(value = JobParamValidateConstants.SALARY_MAX, message = JobParamValidateConstants.MSG_SALARY_GTE_MAX)
             Double minSalary,
 
-            @RequestParam(value = JobFilterConstants.PARAM_SALARY_LTE, required = false)
-            @DecimalMin(value = JobFilterConstants.SALARY_MIN, message = JobFilterConstants.MSG_SALARY_LTE_MIN)
-            @DecimalMax(value = JobFilterConstants.SALARY_MAX, message = JobFilterConstants.MSG_SALARY_LTE_MAX)
+            @RequestParam(value = JobParamValidateConstants.PARAM_SALARY_LTE, required = false)
+            @DecimalMin(value = JobParamValidateConstants.SALARY_MIN, message = JobParamValidateConstants.MSG_SALARY_LTE_MIN)
+            @DecimalMax(value = JobParamValidateConstants.SALARY_MAX, message = JobParamValidateConstants.MSG_SALARY_LTE_MAX)
             Double maxSalary,
 
-            @RequestParam(value = JobFilterConstants.PARAM_JOB_TITLE, required = false)
-            @Size(max = JobFilterConstants.JOB_TITLE_MAX_LENGTH, message = JobFilterConstants.MSG_JOB_TITLE_SIZE)
+            @RequestParam(value = JobParamValidateConstants.PARAM_JOB_TITLE, required = false)
+            @Size(max = JobParamValidateConstants.JOB_TITLE_MAX_LENGTH, message = JobParamValidateConstants.MSG_JOB_TITLE_SIZE)
             String jobTitle,
 
-            @RequestParam(value = JobFilterConstants.PARAM_GENDER, required = false)
-            @Pattern(regexp = JobFilterConstants.GENDER_PATTERN, flags = Pattern.Flag.CASE_INSENSITIVE,
-                    message = JobFilterConstants.MSG_GENDER_PATTERN)
+            @RequestParam(value = JobParamValidateConstants.PARAM_GENDER, required = false)
+            @Pattern(regexp = JobParamValidateConstants.GENDER_PATTERN, flags = Pattern.Flag.CASE_INSENSITIVE,
+                    message = JobParamValidateConstants.MSG_GENDER_PATTERN)
             String gender) {
+
+        JobRequestParam req = JobRequestParam.builder()
+                .minSalary(minSalary)
+                .maxSalary(maxSalary)
+                .jobTitle(jobTitle)
+                .gender(gender)
+                .build();
 
         return ResponseEntity.ok();
     }
@@ -45,7 +53,7 @@ public class JobController {
 
     // GET /job_data?fields=job_title,gender,salary
     @GetMapping(params = "fields")
-    public ResponseEntity<List<Map<String, Object>>> getJobsByFields(
+    public ResponseEntity<List<Map<String, Object>>> getJobsFilterdColumn(
             @RequestParam("fields") String fields) {
 
         List<String> selectedFields = List.of(fields.split(","));
