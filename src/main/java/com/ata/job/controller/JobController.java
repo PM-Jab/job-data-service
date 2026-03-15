@@ -25,7 +25,7 @@ public class JobController {
     // GET /job_data?fields=job_title,gender,salary
     // GET /job_data?salary[gte]=100&fields=job_title
     // GET /job_data?salary[gte]=100&fields=job_title&sort=job_title&sort_type=DESC
-    @GetMapping(value="/job_data", params = "fields")
+    @GetMapping(value="/job_data")
     public ResponseEntity<List<JobResponseBody>> getJobs(
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "sort_type", required = false, defaultValue = "ASC") String sortType,

@@ -4,9 +4,9 @@
 CREATE TABLE IF NOT EXISTS job (
     id                      BIGSERIAL PRIMARY KEY,
     timestamp               VARCHAR(50),
-    employer                VARCHAR(255),
-    location                VARCHAR(255),
-    job_title               VARCHAR(255),
+    employer                TEXT,
+    location                TEXT,
+    job_title               TEXT,
     years_at_employer       VARCHAR(50),
     years_of_experience     VARCHAR(50),
     salary                  DOUBLE PRECISION,
