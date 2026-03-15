@@ -23,7 +23,8 @@ public class JobService {
 
     public List<JobResponseBody> getJobsFiltered(JobRequestParam req) {
         Specification<Job> spec = Specification.where(JobSpecification.fromParams(req));
-        Sort sort = Sort.by(Sort.Direction.fromString(req.getSortType()), req.getSort() != null ? req.getSort() : "timestamp");
+        String sortField = JobSpecification.toEntityField(req.getSort() != null ? req.getSort() : "timestamp");
+        Sort sort = Sort.by(Sort.Direction.fromString(req.getSortType()), sortField);
 
         Set<String> fields = null;
         if (req.getFields() != null && !req.getFields().isBlank()) {

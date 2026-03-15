@@ -11,7 +11,7 @@ import java.util.List;
 
 public class JobSpecification {
 
-    private static String toEntityField(String apiField) {
+    public static String toEntityField(String apiField) {
         return switch (apiField.trim().toLowerCase()) {
             case "job_title"               -> "jobTitle";
             case "years_at_employer"       -> "yearsAtEmployer";
