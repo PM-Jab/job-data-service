@@ -2,7 +2,7 @@ package com.ata.job.controller;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mapping.PropertyReferenceException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,11 +25,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    // Catches invalid sort
-    @ExceptionHandler(PropertyReferenceException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidSort(PropertyReferenceException ex) {
+    // Catches invalid sort field
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidSort(InvalidDataAccessApiUsageException ex) {
         return ResponseEntity.badRequest()
-                .body(Map.of("sort", "Invalid sort field: " + ex.getPropertyName()));
+                .body(Map.of("sort", "Invalid sort field: " + ex.getMessage()));
     }
 
     // Catches invalid fields parameter
